@@ -72,8 +72,7 @@ class TimesketchLogger(logging.getLoggerClass()):
     def __get_times(self):
         tm = int(time.time())
         dt = datetime.utcfromtimestamp(tm).isoformat()
-        times = {'unixtime': tm, 'isotime': dt}
-        return times
+        return {'unixtime': tm, 'isotime': dt}
 
 
 class NullHandler(logging.Handler):

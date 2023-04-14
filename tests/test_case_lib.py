@@ -9,7 +9,7 @@ from moto import mock_s3
 
 from aws_ir.libs import case
 
-log_base = "{}/mock_s3".format(os.path.dirname(os.path.abspath(__file__)))
+log_base = f"{os.path.dirname(os.path.abspath(__file__))}/mock_s3"
 
 
 def setup_module():

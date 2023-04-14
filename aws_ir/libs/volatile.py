@@ -21,10 +21,7 @@ class Memory(object):
         self.dry_run = dry_run
 
         # Check if logging level is set to logging.DEBUG
-        if logger.getEffectiveLevel() < logging.INFO:
-            self.verbose = True
-        else:
-            self.verbose = False
+        self.verbose = logger.getEffectiveLevel() < logging.INFO
 
     def get_memory(
         self,
@@ -72,11 +69,7 @@ class Memory(object):
 
         try:
             repository_url = 'https://threatresponse-lime-modules.s3.amazonaws.com/'
-            if 'Darwin' in platform.system():
-                repository_gpg_verify = False
-            else:
-                repository_gpg_verify = True
-
+            repository_gpg_verify = 'Darwin' not in platform.system()
             self.repo = Repository(repository_url, repository_gpg_verify)
 
             if 'Darwin' not in platform.system():

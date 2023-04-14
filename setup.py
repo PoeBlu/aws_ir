@@ -5,8 +5,8 @@ from setuptools import setup
 VERSION = re.search(
     r"^__version__ = ['\"]([^'\"]*)['\"]",
     open('aws_ir/_version.py', 'r').read(),
-    re.MULTILINE
-).group(1)
+    re.MULTILINE,
+)[1]
 
 setup(name="aws_ir",
       version=VERSION,

@@ -47,10 +47,7 @@ class Compromise(object):
 
     def _target_type(self):
         """Returns the target type based on regex."""
-        if len(self.target.split('.')) is 4:
-            return 'ip-address'
-        else:
-            return 'instance-id'
+        return 'ip-address' if len(self.target.split('.')) is 4 else 'instance-id'
 
     def mitigate(self):
 
@@ -93,7 +90,7 @@ class Compromise(object):
                     compromised_resource=compromised_resource,
                     dry_run=False
                 )
-            elif 'get_memory' == action:
+            elif action == 'get_memory':
                 logger.info("attempting memory run")
                 self.do_mem(session, compromised_resource)
 
