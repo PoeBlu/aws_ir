@@ -32,10 +32,7 @@ class Core(object):
         plugins = ""
         for p in self.list:
             if "_key" in p:
-                if plugins == "":
-                    plugins = p
-                else:
-                    plugins = plugins + ',' + p
+                plugins = p if plugins == "" else f'{plugins},{p}'
         return plugins
 
     def instance_plugins(self):
@@ -43,20 +40,13 @@ class Core(object):
         plugins = ""
         for p in self.list:
             if "_host" in p:
-                if plugins == "":
-                    plugins = p
-                else:
-                    plugins = plugins + ',' + p
-        plugins = plugins + ',' + 'get_memory'
-        return plugins
+                plugins = p if plugins == "" else f'{plugins},{p}'
+        return f'{plugins},get_memory'
 
     def lambda_plugins(self):
         """Return list of only the plugins that relate to the lambda compromise."""
         plugins = ""
         for p in self.list:
             if "_lambda" in p:
-                if plugins == "":
-                    plugins = p
-                else:
-                    plugins = plugins + ',' + p
+                plugins = p if plugins == "" else f'{plugins},{p}'
         return plugins

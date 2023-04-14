@@ -42,11 +42,7 @@ class Case(object):
             profile=self.profile
         )
 
-        if case_number:
-            self.case_number = case_number
-        else:
-            self.case_number = self._generate_case_number()
-
+        self.case_number = case_number if case_number else self._generate_case_number()
         if case_bucket:
             self.case_bucket = case_bucket
         else:
@@ -147,11 +143,11 @@ class Case(object):
 
     def _get_case_logs(self, base_dir="/tmp"):
         """Enumerates all case logs based on case number from system /tmp"""
-        files = []
-        for file in os.listdir(base_dir):
-            if file.startswith(self.case_number):
-                files.append(file)
-        return files
+        return [
+            file
+            for file in os.listdir(base_dir)
+            if file.startswith(self.case_number)
+        ]
 
     def _setup_bucket(self, region):
         """Wrap s3 find or create in object"""
@@ -160,14 +156,9 @@ class Case(object):
             service='s3'
         ).connect()
 
-        bucket_name = s3bucket.CaseBucket(
-            self.case_number,
-            region,
-            client,
-            self.s3_resource
+        return s3bucket.CaseBucket(
+            self.case_number, region, client, self.s3_resource
         ).bucket.name
-
-        return bucket_name
 
     def _get_case_bucket(self):
         return self.s3_resource.connect().Bucket(self.case_bucket)

@@ -13,21 +13,18 @@ class CaseBucket(object):
 
     def find_or_create_by(self):
         bucket = self._locate_bucket()
-        if bucket is not None:
-            return bucket
-        else:
+        if bucket is None:
             self.bucket_name = self._generate_name()
             bucket = self._create_s3_bucket()
             self._set_acls(self.bucket_name)
             self._set_tags(self.bucket_name)
             self._set_versioning(self.bucket_name)
-            return bucket
-        pass
+        return bucket
 
     def cleanup_empty_buckets(self):
         buckets = self.client.list_buckets()
         for bucket in buckets['Buckets']:
-            if str(bucket['Name']).find('cloud-response') != -1:
+            if 'cloud-response' in str(bucket['Name']):
                 try:
                     self.client.delete_bucket(Bucket=bucket['Name'])
                     print(bucket['Name'])
@@ -35,24 +32,17 @@ class CaseBucket(object):
                     pass
 
     def _generate_name(self):
-        bucket_name = 'cloud-response-' + str(uuid.uuid4()).replace('-', '')
-        return bucket_name
+        return 'cloud-response-' + str(uuid.uuid4()).replace('-', '')
 
     def _create_s3_bucket(self):
-        # the if statement is to prevent
-        # a fun little bug https://github.com/boto/boto3/issues/125
-        if self.region == 'us-east-1':
-            bucket = self.s3.create_bucket(
-                Bucket=self.bucket_name
-            )
-        else:
-            bucket = self.s3.create_bucket(
+        return (
+            self.s3.create_bucket(Bucket=self.bucket_name)
+            if self.region == 'us-east-1'
+            else self.s3.create_bucket(
                 Bucket=self.bucket_name,
-                CreateBucketConfiguration={
-                    'LocationConstraint': self.region
-                }
+                CreateBucketConfiguration={'LocationConstraint': self.region},
             )
-        return bucket
+        )
 
     def _set_acls(self, bucket_name):
         self.s3.BucketAcl(bucket_name).put(ACL='bucket-owner-full-control')
@@ -84,13 +74,7 @@ class CaseBucket(object):
         for bucket in buckets:
             if bucket.name.startswith("cloud-response-"):
                 tags = self._get_bucket_tags(bucket.name)
-                if self._check_tags(tags):
-                    case_bucket = bucket
-                    return case_bucket
-                else:
-                    return None
-            else:
-                pass
+                return bucket if self._check_tags(tags) else None
 
     def _get_bucket_tags(self, bucket):
         try:
@@ -107,9 +91,6 @@ class CaseBucket(object):
             return False
         elif tag_object.get('TagSet', None) is not None:
             for tag in tag_object['TagSet']:
-                if tag['Value'] == self.case_number:
-                    return True
-                else:
-                    return False
+                return tag['Value'] == self.case_number
         else:
             return False

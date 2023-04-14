@@ -15,7 +15,7 @@ class Connection(object):
         try:
             boto3.setup_default_session(profile_name=self.profile)
         except Exception as e:
-            logger.info("Problem setting default boto3 session: {}".format(e))
+            logger.info(f"Problem setting default boto3 session: {e}")
 
     def connect(self):
         if self.connection_type is None:
@@ -46,9 +46,7 @@ class Connection(object):
                     "Returning session for default profile."
                 )
             except Exception as e:
-                logger.info(
-                    "We are likely running on AWS instance.: {}".format(e)
-                )
+                logger.info(f"We are likely running on AWS instance.: {e}")
                 session = boto3.Session(
                     region_name=self.region
                 )

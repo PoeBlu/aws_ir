@@ -181,11 +181,7 @@ class cli():
             self.config.profile
         )
 
-        if self.config.verbose:
-            log_level = logging.DEBUG
-        else:
-            log_level = logging.INFO
-
+        log_level = logging.DEBUG if self.config.verbose else logging.INFO
         aws_ir.set_stream_logger(level=log_level)
         aws_ir.set_file_logger(case_obj.case_number, level=log_level)
         logger = logging.getLogger(__name__)

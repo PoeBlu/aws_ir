@@ -6,8 +6,7 @@ from aws_ir.cli import cli
 
 @pytest.fixture
 def cli_object():
-    cli_object = cli()
-    return cli_object
+    return cli()
 
 
 def test_parse_args():
